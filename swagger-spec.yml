@@ -1,0 +1,18 @@
+openapi: 3.0.0
+paths:
+  /api:
+    get:
+      operationId: AppController_getHello
+      parameters: []
+      responses:
+        "200":
+          description: ""
+info:
+  title: simplicy-secret-service
+  description: Resource Server
+  version: 0.0.1
+  contact: {}
+tags: []
+servers: []
+components:
+  schemas: {}

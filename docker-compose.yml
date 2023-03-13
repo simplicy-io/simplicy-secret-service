@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  simplicy-secret-service:
+    build: .
+    ports:
+      - ${PORT}:${PORT}
+    environment:
+      - NODE_ENV=development
+      - JWKS_ENDPOINT=
+      - DB_HOST=mongo
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - MONGO_URI_PREFIX=mongodb
+
+  mongo:
+    image: docker.io/bitnami/mongodb:5.0
+    environment:
+      - MONGODB_USERNAME=${DB_USER}
+      - MONGODB_PASSWORD=${DB_PASSWORD}
+      - MONGODB_DATABASE=${DB_NAME}
+      - MONGODB_ROOT_PASSWORD=${DB_PASSWORD}
+      - MONGODB_PRIMARY_ROOT_USER=${DB_USER}
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+    volumes:
+      - mongo-vol:/bitnami
+
+volumes:
+  mongo-vol:
