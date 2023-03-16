@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres
+    container_name: postgres
+    restart: always
+    env_file: .env.local
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - simplicy
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4
+    restart: always
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: hello@simplicy.io
+      PGADMIN_DEFAULT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    links:
+      - postgres
+    networks:
+      - simplicy
+
+volumes:
+  pgdata:
+  pgadmin-data:
+
+networks:
+  simplicy:

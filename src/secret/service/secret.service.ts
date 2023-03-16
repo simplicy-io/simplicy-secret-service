@@ -1,21 +1,29 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { MongoRepository } from 'typeorm';
-import { Secret } from '../models/secret.model';
-import { CreateSecretDto } from '../dto/secret.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Secret, SecretDocument } from '../schemas/secret.schema';
+import { CreateSecretDto } from 'secret/dto/secret.dto';
 
 @Injectable()
 export class SecretService {
   constructor(
-    @InjectRepository(Secret)
-    private readonly secretRepository: MongoRepository<Secret>,
+    @InjectModel(Secret.name) private secretModel: Model<SecretDocument>,
   ) {}
 
-  async findOneBy(id: string): Promise<Secret> {
-    return this.secretRepository.findOneBy(id);
+  async create(createSecretDto: CreateSecretDto): Promise<SecretDocument> {
+    const createdSecret = new this.secretModel(createSecretDto);
+    return createdSecret.save();
   }
 
-  async create(createSecretDto: CreateSecretDto): Promise<CreateSecretDto> {
-    return this.secretRepository.save(createSecretDto);
+  async findAll(): Promise<SecretDocument[]> {
+    return this.secretModel.find().exec();
+  }
+
+  async findById(id: string): Promise<SecretDocument> {
+    return this.secretModel.findById(id);
+  }
+
+  async delete(id: string): Promise<SecretDocument> {
+    return this.secretModel.findByIdAndDelete(id).exec();
   }
 }

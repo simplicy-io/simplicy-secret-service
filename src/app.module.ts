@@ -1,30 +1,22 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+// import { AuthModule } from './auth/auth.module';
 import { SecretModule } from './secret/secret.module';
-import { Secret } from './secret/models/secret.model';
+import { MongooseModule } from '@nestjs/mongoose';
+// import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env',
+      envFilePath: '.env.local',
     }),
-    TypeOrmModule.forRoot({
-      type: 'mongodb',
-      url: process.env.DB_URL,
-      username: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
-      entities: [Secret],
-      autoLoadEntities: true,
-      synchronize: true,
-      useUnifiedTopology: true,
-      useNewUrlParser: true,
-    }),
+    MongooseModule.forRoot(process.env.DB_URL + process.env.DB_NAME),
+    // AuthModule,
     SecretModule,
+    // UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

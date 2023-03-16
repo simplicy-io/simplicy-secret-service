@@ -7,6 +7,25 @@ paths:
       responses:
         "200":
           description: ""
+  "/api/secret/{id}":
+    get:
+      operationId: SecretController_getSecretById
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+  /api/secret:
+    post:
+      operationId: SecretController_addSecret
+      parameters: []
+      responses:
+        "201":
+          description: ""
 info:
   title: simplicy-secret-service
   description: Resource Server

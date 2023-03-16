@@ -2,5 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateSecretDto {
   @ApiProperty()
-  secrethash: string;
+  readonly _id?: string;
+
+  @ApiProperty()
+  readonly secrethash: string;
 }

@@ -1,6 +1,6 @@
 FROM node:18.15.0 AS builder
 
-ARG APP_PORT
+ARG PORT
 
 # Create app directory
 WORKDIR /app
@@ -20,5 +20,5 @@ COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/tsconfig.build.json ./
 
-EXPOSE ${APP_PORT}
-CMD [ "yarn", "start" ]
+EXPOSE 8080
+CMD [ "yarn", "start:dev" ]

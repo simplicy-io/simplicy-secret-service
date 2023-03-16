@@ -1,6 +1,56 @@
 version: '3'
 
 services:
+  mongo:
+    image: docker.io/bitnami/mongodb:5.0
+    container_name: mongodb
+    restart: always
+    env_file: .env.local
+    environment:
+      - MONGODB_USERNAME=${DB_USER}
+      - MONGODB_PASSWORD=${DB_PASSWORD}
+      - MONGODB_DATABASE=${DB_NAME}
+      - MONGODB_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MONGODB_PRIMARY_ROOT_USER=${DB_ROOT_PASSWORD}
+    ports:
+      - ${MONGO_DB_PORT}:${MONGO_DB_PORT}
+    volumes:
+      - mongo-vol:/bitnami
+    networks:
+      - simplicy
+  # postgres:
+  #   image: postgres
+  #   container_name: postgres
+  #   restart: always
+  #   env_file: .env.local
+  #   environment:
+  #     - POSTGRES_DB=${DB_NAME}
+  #     - POSTGRES_USER=${DB_USER}
+  #     - POSTGRES_PASSWORD=${DB_PASSWORD}
+  #   ports:
+  #     - ${PG_DB_PORT}:${PG_DB_PORT}
+  #   volumes:
+  #     - pgdata:/var/lib/postgresql/data
+  #   networks:
+  #     - simplicy
+  # pgadmin:
+  #   image: dpage/pgadmin4
+  #   container_name: pgadmin4
+  #   restart: always
+  #   ports:
+  #     - ${PGADMIN_PORT}:80
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: hello@simplicy.io
+  #     PGADMIN_DEFAULT_PASSWORD: ${DB_ROOT_PASSWORD}
+  #   volumes:
+  #     - pgadmin-data:/var/lib/pgadmin
+  #   depends_on:
+  #     - postgres
+  #   links:
+  #     - postgres
+  #   networks:
+  #     - simplicy
+
   simplicy-secret-service:
     build: .
     ports:
@@ -8,24 +58,22 @@ services:
     environment:
       - NODE_ENV=development
       - JWKS_ENDPOINT=
-      - DB_HOST=mongo
+      - DB_HOST=postgres
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
       - MONGO_URI_PREFIX=mongodb
-
-  mongo:
-    image: docker.io/bitnami/mongodb:5.0
-    environment:
-      - MONGODB_USERNAME=${DB_USER}
-      - MONGODB_PASSWORD=${DB_PASSWORD}
-      - MONGODB_DATABASE=${DB_NAME}
-      - MONGODB_ROOT_PASSWORD=${DB_PASSWORD}
-      - MONGODB_PRIMARY_ROOT_USER=${DB_USER}
-    ports:
-      - ${DB_PORT}:${DB_PORT}
-    volumes:
-      - mongo-vol:/bitnami
+    depends_on:
+      - mongo
+    links:
+      - mongo
+    env_file:
+      - .env.local
+    networks:
+      - simplicy
 
 volumes:
   mongo-vol:
+
+networks:
+  simplicy:
